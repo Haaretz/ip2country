@@ -5,9 +5,9 @@ services:
     image: "nexus-ng.themarker.com/ip2country:${version:-latest}"
     hostname: ip2counrty
     networks:
-      - production
+      - prod02
     ports:
       - "4005:8080"
 networks:
-  production:
+  prod02:
     external: true
