@@ -1,0 +1,4 @@
+# This file will be generated when running go mod tidy
+# For now, it's empty but will be populated during Docker build
+
+

@@ -12,7 +12,7 @@ import (
 	geoip2 "github.com/oschwald/geoip2-golang"
 )
 
-var dbFile = "GeoIP2-Country.mmdb"
+var dbFile = "GeoLite2-City.mmdb"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	db, err := geoip2.Open(dbFile)
@@ -36,9 +36,24 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		errorHandler(w, r, 500, "Internal Server Error")
 		return
 	}
-	resp := make(map[string]string, 2)
+	resp := make(map[string]string, 4)
 	resp["country"] = record.Country.Names["en"]
 	resp["code"] = record.Country.IsoCode
+	
+	// Add city name if available
+	if len(record.City.Names) > 0 {
+		if cityName, ok := record.City.Names["en"]; ok {
+			resp["city"] = cityName
+		}
+	}
+	
+	// Add region/subdivision name if available
+	if len(record.Subdivisions) > 0 {
+		if regionName, ok := record.Subdivisions[0].Names["en"]; ok {
+			resp["region"] = regionName
+		}
+	}
+	
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(resp)
 }
